@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "This extension helps download all images from post at Joyreactor in one click",
   "permissions": [
-    "webRequest",
-    "webRequestBlocking",
-    "downloads",
-    "tabs",
     "*://*.reactor.cc/*",
     "*://*.joyreactor.cc/*",
     "*://*.joyreactor.com/*",
