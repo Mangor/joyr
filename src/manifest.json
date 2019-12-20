@@ -1,0 +1,45 @@
+{
+  "name": "Joyr",
+  "version": "1.0.0",
+  "description": "This extension helps download all images from post at Joyreactor in one click",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "downloads",
+    "tabs",
+    "*://*.reactor.cc/*",
+    "*://*.joyreactor.cc/*",
+    "*://*.joyreactor.com/*",
+    "*://*.pornreactor.cc/*"
+  ],
+  "icons": {
+    "16": "assets/16.png",
+    "32": "assets/32.png",
+    "48": "assets/48.png",
+    "128": "assets/128.png",
+    "256": "assets/256.png",
+    "512": "assets/512.png"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "content_scripts": [{
+    "matches": [
+      "*://*.reactor.cc/*",
+      "*://*.joyreactor.cc/*",
+      "*://*.joyreactor.com/*",
+      "*://*.pornreactor.cc/*"
+    ],
+    "js": [
+      "content.js"
+    ],
+    "run_at": "document_end"
+  }],
+  "browser_action": {
+    "default_icon": "assets/128.png"
+  },
+  "manifest_version": 2
+}
