@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This extension helps download all images from post at Joyreactor in one click",
   "permissions": [
+    "storage",
     "*://*.reactor.cc/*",
     "*://*.joyreactor.cc/*",
     "*://*.joyreactor.com/*",
@@ -15,6 +16,10 @@
     "128": "assets/128.png",
     "256": "assets/256.png",
     "512": "assets/512.png"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   },
   "background": {
     "scripts": [

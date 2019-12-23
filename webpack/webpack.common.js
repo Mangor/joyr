@@ -12,6 +12,14 @@ const copyWebpackPluginPatterns = [
     to: path.resolve(dist),
   },
   {
+    from: path.resolve(src, 'app', 'options', 'options.html'),
+    to: path.resolve(dist),
+  },
+  {
+    from: path.resolve(src, 'app', 'options', 'options.css'),
+    to: path.resolve(dist),
+  },
+  {
     from: path.resolve(src, 'assets'),
     to: path.resolve(dist, 'assets'),
   },
@@ -19,6 +27,7 @@ const copyWebpackPluginPatterns = [
 
 module.exports = {
   entry: {
+    options: path.resolve(src, 'app', 'options', 'options.ts'),
     content: path.resolve(src, 'app', 'content.ts'),
     background: path.resolve(src, 'app', 'background.ts'),
   },
