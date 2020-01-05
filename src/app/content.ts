@@ -66,7 +66,7 @@ cashDom('.postContainer')
   .each((index: number, postContainer: HTMLDivElement) => {
     const taglist = cashDom(postContainer).find('.taglist');
     const postContent = cashDom(postContainer).find('.post_content');
-    let imageUrls: ImageUrls[];
+    let images: ImageUrls[];
 
     cashDom(postContent)
       .find('.image')
@@ -74,15 +74,15 @@ cashDom('.postContainer')
         const hd = cashDom(imageContainer).find('a').attr('href');
         const sd = cashDom(imageContainer).find('img').attr('src');
 
-        imageUrls = [
-          ...(imageUrls ? imageUrls : []),
+        images = [
+          ...(images ? images : []),
           { hd, sd },
         ];
       });
 
-    if (!imageUrls) { return; }
+    if (!images) { return; }
 
-    const [hd, sd] = imageUrls
+    const [hd, sd] = images
       .reduce(
         (result: [string[], string[]], element: ImageUrls) => {
           if (!!element.hd) {
@@ -96,19 +96,29 @@ cashDom('.postContainer')
         [[], []],
       );
 
-    if (!!sd.length) {
-      cashDom(taglist)
-        .prepend(`<b class="download-sd"><a href="">SD (${sd.length}) 💾</a></b>`)
-        .find('.download-sd')
-        .data(sd);
-    }
+    const bf = images.map(({ hd, sd }) => hd || sd);
 
-    if (!!hd.length) {
-      cashDom(taglist)
-        .prepend(`<b class="download-hd"><a href="">HD (${hd.length}) 💾</a></b>`)
-        .find('.download-hd')
-        .data(hd);
-    }
+    const union = { sd, hd, bf };
+
+    Object
+      .keys(union)
+      .map((key: string, index: number) => {
+        chrome.storage.sync.get(
+          {
+            bf: false,
+            hd: false,
+            sd: false,
+          },
+          (options) => {
+            if (!!union[key].length && !!options[key]) {
+              cashDom(taglist)
+                .prepend(`<b class="download-${key}"><a href="">${key.toUpperCase()} (${union[key].length}) 💾</a></b>`)
+                .find(`.download-${key}`)
+                .data(union[key]);
+            }
+          },
+        );
+      });
   });
 
 
@@ -119,3 +129,4 @@ cashDom('.postContainer')
 
 cashDom('.download-sd').find('a').on('click', onClickDownload);
 cashDom('.download-hd').find('a').on('click', onClickDownload);
+cashDom('.download-bf').find('a').on('click', onClickDownload);
