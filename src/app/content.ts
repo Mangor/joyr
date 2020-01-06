@@ -114,19 +114,11 @@ cashDom('.postContainer')
               cashDom(taglist)
                 .prepend(`<b class="download-${key}"><a href="">${key.toUpperCase()} (${union[key].length}) 💾</a></b>`)
                 .find(`.download-${key}`)
-                .data(union[key]);
+                .data(union[key])
+                .find('a')
+                .on('click', onClickDownload);
             }
           },
         );
       });
   });
-
-
-/*
- * Event handlers for new tags
- *
- */
-
-cashDom('.download-sd').find('a').on('click', onClickDownload);
-cashDom('.download-hd').find('a').on('click', onClickDownload);
-cashDom('.download-bf').find('a').on('click', onClickDownload);
