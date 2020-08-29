@@ -13,6 +13,7 @@ type ImageUrls = { hd: string, sd: string };
 
 const globalDownloadProgressHandler = (progressEvent: ProgressEvent, index: string, progress: any, count: any): void => {
   progress[index] = progressEvent.loaded * 100 / progressEvent.total;
+
   const totalPercent = progress ? Object.values<number>(progress).reduce((sum: number, num: number) => sum + num, 0) : 0;
   const total = parseInt(`${Math.round(totalPercent / count)}`);
 
