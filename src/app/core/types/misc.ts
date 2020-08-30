@@ -19,7 +19,19 @@ export type ProgressMessage = {
   progress: number;
 };
 
-export type DownloadMessage = {
-  url: string;
+export type UrlsMessage = {
+  urls: Dictionary;
+};
+
+type ImageMeta = {
+  objectUrl: string;
   name: string;
+};
+
+export type ImagesMessage = {
+  images: ImageMeta[];
+};
+
+export type Dictionary<T = string> = {
+  [keyof: string]: T;
 };
