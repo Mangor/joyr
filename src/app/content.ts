@@ -1,24 +1,9 @@
 import cashDom from 'cash-dom';
-import axios, { AxiosResponse } from 'axios';
 import { saveAs } from 'file-saver';
-import { getFileName } from './core/utils/utils';
+import { Message, ImagesMessage } from './core/types/misc';
 
 // Types
 type ImageUrls = { hd: string, sd: string };
-
-/*
- * Global downloding progress
- *
- */
-
-const globalDownloadProgressHandler = (progressEvent: ProgressEvent, index: string, progress: any, count: any): void => {
-  progress[index] = progressEvent.loaded * 100 / progressEvent.total;
-
-  const totalPercent = progress ? Object.values<number>(progress).reduce((sum: number, num: number) => sum + num, 0) : 0;
-  const total = parseInt(`${Math.round(totalPercent / count)}`);
-
-  chrome.runtime.sendMessage(chrome.runtime.id, { type: 'progress', payload: { progress: total } });
-};
 
 /*
  * Tag click event handler
@@ -28,34 +13,10 @@ const globalDownloadProgressHandler = (progressEvent: ProgressEvent, index: stri
 const onClickDownload = (event: Event) => {
   event.preventDefault();
   event.stopPropagation();
+
   const urls = cashDom(event.currentTarget as HTMLAnchorElement).parent().data();
-  const fileProgress = {};
 
-  const requests = Object.keys(urls).map((key: string) => {
-    const url = urls[key];
-
-    return axios({
-      url,
-      method: 'get',
-      responseType: 'arraybuffer',
-      onDownloadProgress: (event) => globalDownloadProgressHandler(event, key, fileProgress, Object.keys(urls).length),
-    });
-  });
-
-  axios
-    .all(requests)
-    .then((queue: AxiosResponse<Blob>[]) => {
-      queue.map((response: AxiosResponse<Blob>) => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
-        const name = getFileName(response.config.url);
-
-        saveAs(blob, name);
-      });
-    })
-    .catch((error) => console.error(error))
-    .finally(() => {
-      chrome.runtime.sendMessage(chrome.runtime.id, { type: 'progress', payload: { progress: -1 } });
-    });
+  chrome.runtime.sendMessage(chrome.runtime.id, { type: 'urls', payload: { urls } } );
 };
 
 /*
@@ -122,4 +83,30 @@ cashDom('.postContainer')
           },
         );
       });
+  });
+
+/*
+ * Subscribe to background messages
+ *
+ */
+
+chrome
+  .runtime
+  .onMessage
+  .addListener((message: Message, sender) => {
+    if (sender.id !== chrome.runtime.id) { return; }
+
+    switch (message.type) {
+      case 'queue': {
+        const { images }: ImagesMessage = message.payload;
+
+        images.map(async ({ objectUrl, name }) => {
+          const blob = await fetch(objectUrl).then(response => response.blob());
+
+          saveAs(blob, name);
+        });
+
+        break;
+      }
+    }
   });
